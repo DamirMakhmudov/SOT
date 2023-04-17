@@ -6,8 +6,7 @@ var vueObject = {
   template:
     /*html*/
     `
-<h1>СОТ</h1>
-{{mega}}
+<h3>СОТ</h3>
 <div class="q-pa-md fit column justify-center">
   <div class="q-gutter-y-xs" style="height:220px">
 
@@ -24,31 +23,6 @@ var vueObject = {
       </template>
     </q-select>
 
-
-    <!-- <q-select
-    v-model="mega.consumption.val"
-    use-input
-    input-debounce="0"
-    label="Тип расхода"
-    :options="mega.consumptionOptions"
-    @filter="filterconsumptionFn"
-    behavior="menu"
-    v-if="mega.showconsumption"
-    >
-    <template v-slot:prepend>
-      <q-icon name="list" />
-    </template>
-    <template v-slot:no-option>
-      <q-item>
-        <q-item-section class="text-grey">
-          Не нашел такого, ты уверен(а)?
-        </q-item-section>
-      </q-item>
-    </template>
-  </q-select> -->
-
-
-
   </div>
 </div>
 
@@ -58,8 +32,6 @@ var vueObject = {
     var mega = reactive({
       city_id: model.city_id.val,
       filterProfile: model.filterProfile
-
-
     })
 
     function someAction() {
