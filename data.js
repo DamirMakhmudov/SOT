@@ -5,12 +5,12 @@ let model = {
   date_begin: { val: "" },
   base_salary: { val: "" },
   bonus: { val: "" },
+}
 
+let view = {};
 
-  Filials : [
-    "a", "b"
-  ],
-  Filials2: [
+let view2 = {
+  Filials: [
     { "label": "Златоуст", "value2": "1" },
     { "label": "Орск", "value": "2" },
     { "label": "Челябинск", "value": "3" },
@@ -112,4 +112,5 @@ let model = {
     { "vlaue": "173", "label": "Ингосстрах" },
     { "vlaue": "174", "label": "Альфа банк разовый" }
   ]
+
 }
