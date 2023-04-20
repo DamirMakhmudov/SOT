@@ -6,20 +6,13 @@ var vueObject = {
   template:
     /*html*/
     `
-<q-btn color="red" icon="test" class="full-width" @click="ttt()" v-if="mega.showOkbutton"></q-btn>
-{{mega.allowSOTsave}}
-
-{{mega.user_email}}
-
-{{mega.date_begin.val}}
-
 <div class="q-pa-md fit column">
 
   <div class="q-gutter-xs"> <!-- style="height:220px" -->
 
     <div class="text-h6">Создание СОТ Операторов</div>
 
-    <!-- id_sot_o -->
+    <!-- id_sot_o  -->
     <q-input v-model="mega.id_sot_o.val" readonly disable @update:model-value="val => SOT_find()">
       <template v-slot:prepend>
         <q-icon name="123" />
@@ -57,7 +50,7 @@ var vueObject = {
     </q-select>
 
     <!-- date -->
-    <q-input v-model="mega.date_begin.val" type="date" hint="Native date"  @update:model-value="val => SOT_find()" >
+    <q-input v-model="mega.date_begin.val" type="date" hint="Native date" @update:model-value="val => SOT_find()">
       <template v-slot:prepend>
         <q-icon name="event" />
       </template>
@@ -69,6 +62,7 @@ var vueObject = {
       </template>
     </q-input>
     -->
+
     <!-- base_salary -->
     <q-input v-model="mega.base_salary.val" label="Оклад" type="number" mask="#"
       :options="{currency: false, autoDecimalMode: false}">
@@ -85,11 +79,10 @@ var vueObject = {
       </template>
     </q-input>
 
-
     <!-- button -->
     <div class="row full-width no-wrap q-my-md">
-      <q-btn color="red" icon="cancel" class="full-width" @click="SOT_clear()" v-if="mega.showOkbutton"></q-btn>
-      <q-btn color="primary" icon="done" class="full-width" @click="SOT_dialog()" v-if="mega.showOkbutton" :disable = "mega.allowSOTsave"></q-btn>
+      <q-btn color="red" icon="cancel" class="full-width" @click="SOT_clear()"></q-btn>
+      <q-btn color="primary" icon="done" class="full-width" @click="SOT_dialog()" :disable="mega.allowSOTsave"></q-btn>
     </div>
 
   </div>
@@ -97,9 +90,9 @@ var vueObject = {
   <q-separator color="grey"></q-separator>
 
   <!-- ГРЕЙД -->
-  <div class="q-gutter-b-xs">
+  <div class="q-gutter-b-xs" v-if="mega.id_sot_o.val">
 
-    <div class="text-h6 q-py-md">Грейды</div>
+    <div class="text-h6 q-py-md">Создание Грейд</div>
 
     <!-- id_sot_o -->
     <q-input v-model="mega.id_sot_o.val" readonly disable @update:model-value="val => SOT_find()">
@@ -108,9 +101,35 @@ var vueObject = {
       </template>
     </q-input>
 
+    <!-- greid -->
+    <q-input v-model="mega.greid.val" label="Грейд" type="number" :rules="[val => (val >= 2 || val =='') || 'Значение должно быть >= 2']" :options="{currency: false, autoDecimalMode: false}">
+      <template v-slot:prepend>
+        <q-icon name="numbers" />
+      </template>
+    </q-input>
+
+    <!-- base_salary -->
+    <q-input v-model="mega.base_salary.val" label="Оклад" type="number" mask="#"
+      :options="{currency: false, autoDecimalMode: false}">
+      <template v-slot:prepend>
+        <q-icon name="attach_money" />
+      </template>
+    </q-input>
+
+    <!-- bonus -->
+    <q-input v-model="mega.bonus.val" label="Максимальная премия" type="number" mask="#" :options="{currency: false, autoDecimalMode: false}">
+      <template v-slot:prepend>
+        <q-icon name="emoji_events" />
+      </template>
+    </q-input>
+
+    <!-- button -->
+    <div class="row full-width no-wrap q-my-md">
+      <q-btn color="red" icon="cancel" class="full-width" @click="Greid_clear()"></q-btn>
+      <q-btn color="primary" icon="done" class="full-width" @click="Greid_dialog()" :disable="!mega.allowGreidSave"></q-btn>
+    </div>
+
   </div>
-
-
 </div>
 
 `,
@@ -123,15 +142,18 @@ var vueObject = {
       date_begin: model.date_begin,
       base_salary: model.base_salary,
       bonus: model.bonus,
-
+      greid: model.greid,
       user_email: model.user_email,
 
       Filials: [],
       Groups: [],
 
-      showOkbutton: true,
+      allowGreidSave: computed(() => { return mega.greid.val >= 2 && mega.id_sot_o.val != '' && !mega.allowSOTsave }),
       showGreid: computed(() => { return mega.id_sot_o.val == "" ? false : true }),
-      allowSOTsave: computed(() => { return ["city_id", "group_id", "date_begin", "base_salary", "bonus"].some(item => mega[item].val == "") ? true : false }),
+      allowSOTsave: computed(() => {
+        return ["city_id", "group_id", "date_begin", "base_salary", "bonus"].some(item =>
+          mega[item].val == "") ? true : false
+      }),
     })
 
     function SOT_clear() {
@@ -146,6 +168,10 @@ var vueObject = {
       })
     }
 
+    function Greid_clear() {
+      mega.greid.val = ''
+    }
+
     function SOT_dialog() {
       $q.dialog({
         title: 'Подтверждение',
@@ -153,26 +179,34 @@ var vueObject = {
         cancel: true,
         persistent: true
       }).onOk(() => {
-        console.log('>>>> OK');
         SOT_save();
       }).onCancel(() => {
-        console.log('>>>> Cancel')
+      })
+    }
+
+    function Greid_dialog() {
+      $q.dialog({
+        title: 'Подтверждение',
+        message: 'Сохранить Грейд?',
+        cancel: true,
+        persistent: true
+      }).onOk(() => {
+        Greid_save();
+      }).onCancel(() => {
       })
     }
 
     async function SOT_find() {
       let date_begin = mega.date_begin.val.replace(/^(\d{4}-\d{2})-\d{2}(.*)$/, '$1-01');
-      let [city_id, group_id] = [mega.city_id.val, mega.group_id.val];
-      if ([city_id, group_id, date_begin].some(val => val == '')) return;
-
+      if (mega.city_id.val.value == '' || mega.group_id.val.value == '' || date_begin == '') return;
       let url =
         'https://script.google.com/macros/s/AKfycbxFA7VM6Xl9YVNZFiX2kIIv5U8Ne69Z6VANsT5l1n8ZqPO-1hjfl-ODHIpCi-lEXe_Dpw/exec?mode=getview',
         body = {
           mode: 'SOT_find',
-          city_id: city_id.value,
-          filial_name: city_id.label,
-          group_id: group_id.value,
-          group_name: group_id.label,
+          city_id: mega.city_id.val.value,
+          filial_name: mega.city_id.val.label,
+          group_id: mega.group_id.val.value,
+          group_name: mega.group_id.val.label,
           date_begin: date_begin
         };
 
@@ -203,14 +237,17 @@ var vueObject = {
         'https://script.google.com/macros/s/AKfycbxFA7VM6Xl9YVNZFiX2kIIv5U8Ne69Z6VANsT5l1n8ZqPO-1hjfl-ODHIpCi-lEXe_Dpw/exec?mode=getview',
         body = {
           mode: 'SOT_save',
-          id_sot_o: mega.id_sot_o.val.value,
+          id_sot_o: mega.id_sot_o.val,
           city_id: mega.city_id.val.value,
           filial_name: mega.city_id.val.label,
           group_id: mega.group_id.val.value,
           group_name: mega.group_id.val.label,
           date_begin: mega.date_begin.val,
-          user_email: mega.user_email
+          user_email: mega.user_email,
+          base_salary: mega.base_salary.val,
+          bonus: mega.bonus.val
         };
+
       let response = await fetch(url, {
         method: 'POST',
         muteHttpExceptions: false,
@@ -225,15 +262,37 @@ var vueObject = {
         },
       }
       ).then(resp => resp.json());
-
       if (response.answer) {
         notify('СОТ успешно записан', 'positive');
         SOT_clear();
       }
     }
 
-    function ttt() {
+    async function Greid_save() {
+      let url =
+        'https://script.google.com/macros/s/AKfycbxFA7VM6Xl9YVNZFiX2kIIv5U8Ne69Z6VANsT5l1n8ZqPO-1hjfl-ODHIpCi-lEXe_Dpw/exec?mode=getview',
+        body = {
+          mode: 'Greid_save',
+          id_sot_o: mega.id_sot_o.val,
+          base_salary: mega.base_salary.val,
+          bonus: mega.bonus.val,
+          greid: mega.greid.val,
+          user_email: mega.user_email
+        };
 
+      let response = await fetch(url, {
+        method: 'POST',
+        muteHttpExceptions: false,
+        body: JSON.stringify(body),
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      }
+      ).then(resp => resp.json());
+      if (response.answer) {
+        notify('Грейд успешно записан', 'positive');
+        Greid_clear();
+      }
     }
 
     function filterFilials(val, update) {
@@ -284,21 +343,21 @@ var vueObject = {
       // mega.Groups = response.Groups;
 
       /*
-        Object.entries(response).forEach(ent => {
-        let key = ent[0];
-        console.log(key, ent[1])
-        if (modelc.hasOwnProperty(key)) {
-        if (modelc[key].hasOwnProperty('val')) {
-        if (modelc[key].val == '') {
-        modelc[key].val = (ent[1] === null ? '' :ent[1])
-        }
-        } else {
-        if (modelc[key] == '') {
-        modelc[key] = (ent[1] === null ? '' :ent[1])
-        }
-        }
-        }
-        })
+      Object.entries(response).forEach(ent => {
+      let key = ent[0];
+      console.log(key, ent[1])
+      if (modelc.hasOwnProperty(key)) {
+      if (modelc[key].hasOwnProperty('val')) {
+      if (modelc[key].val == '') {
+      modelc[key].val = (ent[1] === null ? '' :ent[1])
+      }
+      } else {
+      if (modelc[key] == '') {
+      modelc[key] = (ent[1] === null ? '' :ent[1])
+      }
+      }
+      }
+      })
       */
     }
 
@@ -307,8 +366,8 @@ var vueObject = {
         message: text,
         icon: 'announcement',
         timeout: 2000,
-        type: type
-
+        type: type,
+        position: "top"
       })
     }
 
@@ -317,7 +376,7 @@ var vueObject = {
     })
 
     // onMounted(() => {
-    //   getView();
+    // getView();
     // })
 
     watch(mega.date_begin, (value) => {
@@ -332,9 +391,10 @@ var vueObject = {
       SOT_find,
       SOT_save,
       SOT_dialog,
+      Greid_dialog,
+      Greid_clear,
       getView,
-      notify,
-      ttt
+      notify
     }
   }
 }
