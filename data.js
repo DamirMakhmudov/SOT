@@ -1,10 +1,18 @@
 let model = {
   id_sot_o: { val: "" },
-  city_id: { val: "" },
-  group_id: { val: "" },
-  date_begin: { val: "" },
+  // city_id: { val: { label: 'Салават', value: '9' } },
+  city_id: { val: { label: '', value: '' } },
+
+  // group_id: { val: { label: 'Dpd', value: '55' } },
+  group_id: { val: { label: '', value: '' } },
+
+  // date_begin: { val: '2023-04-17' },
+  date_begin: { val: '' },
+
   base_salary: { val: "" },
   bonus: { val: "" },
+  user_email: "samrukov@gmail.com"
+
 }
 
 let view = {};
