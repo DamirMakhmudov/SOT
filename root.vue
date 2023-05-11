@@ -20,8 +20,7 @@ var vueObject = {
     </q-input>
 
     <!-- city_id -->
-    <q-select v-model="mega.city_id.val" use-input input-debounce="0" label="Филиал" :options="mega.Filials"
-      behavior="menu" @filter="filterFilials" >
+    <q-select v-model="mega.city_id.val" use-input input-debounce="0" label="Филиал" :options="mega.Filials" behavior="menu" @filter="filterFilials" @update:model-value="val => SOT_find()">
       <template v-slot:prepend>
         <q-icon name="business" />
       </template>
@@ -35,8 +34,7 @@ var vueObject = {
     </q-select>
 
     <!-- group_id -->
-    <q-select v-model="mega.group_id.val" use-input input-debounce="0" label="Группа" :options="mega.Groups"
-      behavior="menu" @filter="filterGroups" >
+    <q-select v-model="mega.group_id.val" use-input input-debounce="0" label="Группа" :options="mega.Groups" behavior="menu" @filter="filterGroups" @update:model-value="val => SOT_find()">
       <template v-slot:prepend>
         <q-icon name="groups" />
       </template>
@@ -50,7 +48,7 @@ var vueObject = {
     </q-select>
 
     <!-- date -->
-    <q-input v-model="mega.date_begin.val" type="date" hint="Native date">
+    <q-input v-model="mega.date_begin.val" type="date" hint="Native date" @update:model-value="val => SOT_find()">
       <template v-slot:prepend>
         <q-icon name="event" />
       </template>
@@ -64,7 +62,7 @@ var vueObject = {
     -->
 
     <!-- base_salary -->
-    <q-input v-model="mega.base_salary.val" label="Оклад" type="number" mask="#" :options="{currency: false, autoDecimalMode: false}"  @update:model-value="val => SOT_find()">
+    <q-input v-model="mega.base_salary.val" label="Оклад" type="number" mask="#" :options="{currency: false, autoDecimalMode: false}"   @update:model-value="val => base_salary_updated(val)">
       <template v-slot:prepend>
         <q-icon name="attach_money" />
       </template>
@@ -233,7 +231,11 @@ var vueObject = {
       ).then(resp => resp.json());
       mega.id_sot_o.val = response.id_sot_o;
       mega.allowSOTsave.val = response.allowSOTsave;
-      if (response.id_sot_o != "") {
+      
+    }
+
+    function base_salary_updated(val){
+      if (mega.id_sot_o.val != "") {
         notify('СОТ будет перезаписан', 'warning')
       }
     }
@@ -402,7 +404,8 @@ var vueObject = {
       Greid_clear,
       getView,
       notify,
-      restrictDecimal
+      restrictDecimal,
+      base_salary_updated
     }
   }
 }
