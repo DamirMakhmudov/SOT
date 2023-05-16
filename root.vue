@@ -48,7 +48,7 @@ var vueObject = {
     </q-select>
 
     <!-- date -->
-    <q-input v-model="mega.date_begin.val" type="date" hint="Native date" @update:model-value="val => SOT_find()">
+    <q-input v-model="mega.date_begin.val" type="date" hint="Native date" @update:model-value="val => {date_begin_updated(val);SOT_find()}">
       <template v-slot:prepend>
         <q-icon name="event" />
       </template>
@@ -155,8 +155,8 @@ var vueObject = {
       }),
     })
 
-    function restrictDecimal(value){
-      if(!Number.isInteger(+value)){
+    function restrictDecimal(value) {
+      if (!Number.isInteger(+value)) {
         mega.greid.val = ""
       }
     }
@@ -231,12 +231,30 @@ var vueObject = {
       ).then(resp => resp.json());
       mega.id_sot_o.val = response.id_sot_o;
       mega.allowSOTsave.val = response.allowSOTsave;
-      
+
     }
 
-    function base_salary_updated(val){
+    function base_salary_updated(val) {
       if (mega.id_sot_o.val != "") {
-        notify('СОТ будет перезаписан', 'warning')
+        notify('Грейд-расширение для этого СОТ будет перезаписано', 'warning')
+      }
+    }
+
+    function date_begin_updated(value) {
+      let today = new Date();
+      let date = new Date(value);
+      let fromDate = new Date(today.getFullYear(), today.getMonth(), 5);
+      let startDate;
+
+      if (today < fromDate) {
+        startDate = new Date(today.setMonth(today.getMonth() - 1));
+        startDate.setDate(1);
+      } else {
+        startDate = fromDate
+      }
+
+      if (date <= startDate) {
+        mega.date_begin.val = ""
       }
     }
 
@@ -405,7 +423,8 @@ var vueObject = {
       getView,
       notify,
       restrictDecimal,
-      base_salary_updated
+      base_salary_updated,
+      date_begin_updated
     }
   }
 }
