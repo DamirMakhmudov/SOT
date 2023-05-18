@@ -62,7 +62,7 @@ var vueObject = {
     -->
 
     <!-- base_salary -->
-    <q-input v-model="mega.base_salary.val" label="Оклад" type="number" mask="#" :options="{currency: false, autoDecimalMode: false}"   @update:model-value="val => base_salary_updated(val)">
+    <q-input v-model="mega.base_salary.val" label="Оклад" type="number" mask="#" :options="{currency: false, autoDecimalMode: false}">
       <template v-slot:prepend>
         <q-icon name="attach_money" />
       </template>
@@ -108,8 +108,7 @@ var vueObject = {
     </q-input>
 
     <!-- base_salary -->
-    <q-input v-model="mega.base_salary.val" label="Оклад" type="number" mask="#"
-      :options="{currency: false, autoDecimalMode: false}">
+    <q-input v-model="mega.base_salary.val" label="Оклад" type="number" mask="#" :options="{currency: false, autoDecimalMode: false}" @update:model-value="val => base_salary_updated(val)">
       <template v-slot:prepend>
         <q-icon name="attach_money" />
       </template>
