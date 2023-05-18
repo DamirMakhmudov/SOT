@@ -250,7 +250,7 @@ var vueObject = {
         startDate = new Date(today.setMonth(today.getMonth() - 1));
         startDate.setDate(1);
       } else {
-        startDate = fromDate
+        startDate = new Date(today.setDate(1)).setHours(0,0,0,0)
       }
 
       if (date <= startDate) {
